@@ -26,7 +26,7 @@ public class ResetPasswordGUI extends JFrame implements ActionListener{
     {
         //----------------------------------------------------//
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setTitle("Register");
+        this.setTitle("Reset Password");
         this.setLayout(null);
         this.setSize(550, 350);
         this.setResizable(false);

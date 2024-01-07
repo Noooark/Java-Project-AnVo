@@ -36,6 +36,7 @@ public class EmployeeGUI extends JPanel implements ActionListener {
     String[] ColumnTable = {"ID", "Name", "Gender", "Birthday", "Email", "Phone", "Position", "Status"};
     String[] PositionList = {"Manager", "Employee"};
     String[] StatusList = {"Active", "Inactive"};
+    String[] GenderList = {"Male", "Female"};
     String ID, Name, Gender, Birthday, Mail, Phone, Position, Status, IDTemp;
     String Data1, Data2, Data3, Data4, Data5, Data6, Data7, Data8;
     String SelectedColumn;
@@ -54,8 +55,8 @@ public class EmployeeGUI extends JPanel implements ActionListener {
     JTable EmployeeTable;
     JScrollPane ListScroll;
     JDatePickerImpl ChooseBirthday;
-    JComboBox CBPosition, CBChoosePosition, CBChooseStatus;
-    JTextField TFSearch, TFID, TFName, TFGender, TFBirthday, TFEmail, TFPhone, TFPosition, TFStatus;
+    JComboBox CBPosition, CBChoosePosition, CBChooseStatus, CBChooseGender;
+    JTextField TFSearch, TFID, TFName, TFBirthday, TFEmail, TFPhone, TFPosition, TFStatus;
     JButton BAdd, BRemove, BEdit, Submit, Cancel, SubmitEdit, CancelEdit;
     JLabel LAdd_Emp, LID_Emp, LName_Emp, LGender_Emp, LBirthday_Emp, LEmail_Emp, LPhone_Emp, LPosition_Emp, LStatus_Emp;
     ImageIcon Icon;
@@ -511,11 +512,13 @@ public class EmployeeGUI extends JPanel implements ActionListener {
             TFName.setBounds(0, 5, 250, 30);
             TFName.setFont(TFfont);
 
-            TFGender = new JTextField();
-            TFGender.setBounds(0, TFName.getY() + 45, 250, 30);
-            TFGender.setFont(TFfont);
+            CBChooseGender = new JComboBox<>(GenderList);
+            CBChooseGender.setBounds(0, TFName.getY() + 45, 250, 30);
+            CBChooseGender.setFont(TFfont);
+            CBChooseGender.setBackground(Color.WHITE);
+            CBChooseGender.setFocusable(false);
 
-            ChooseBirthday = getjDatePicker(0, TFGender.getY() + 50, 250, 27);
+            ChooseBirthday = getjDatePicker(0, CBChooseGender.getY() + 50, 250, 27);
             ChooseBirthday.setFont(TFfont);
             ChooseBirthday.getJFormattedTextField().setEditable(true);
             LocalDate specificDate = LocalDate.of(2005, 1, 1);
@@ -538,6 +541,8 @@ public class EmployeeGUI extends JPanel implements ActionListener {
             CBChooseStatus = new JComboBox<>(StatusList);
             CBChooseStatus.setBounds(0, CBChoosePosition.getY() + 45, 250, 30);
             CBChooseStatus.setFont(TFfont);
+            CBChooseStatus.setFocusable(false);
+            CBChooseStatus.setBackground(Color.WHITE);
             //----------------------------------------------------//
 
             //----------------------------------------------------//
@@ -569,7 +574,7 @@ public class EmployeeGUI extends JPanel implements ActionListener {
 
             //Body.add(TFID);
             Body.add(TFName);
-            Body.add(TFGender);
+            Body.add(CBChooseGender);
             Body.add(ChooseBirthday);
             Body.add(TFEmail);
             Body.add(TFPhone);
@@ -588,7 +593,7 @@ public class EmployeeGUI extends JPanel implements ActionListener {
         {
             Employee InsertEmp = new Employee(
                     TFName.getText(),
-                    TFGender.getText(),
+                    CBChooseGender.getSelectedItem().toString(),
                     ChooseBirthday.getModel().getValue().toString(),
                     TFEmail.getText(),
                     TFPhone.getText(),
@@ -619,8 +624,9 @@ public class EmployeeGUI extends JPanel implements ActionListener {
                         }
                         try {
                             String NewUserName = GenerateUser(InsertEmp.getName(), InsertEmp.getBirthday());
+
                             JOptionPane.showMessageDialog(null, "Username: " + NewUserName + " Password: 123456");
-                            logbus.AddAccount(NewUserName, "123456", InsertEmp.getMail(),InsertEmp.getPosition());
+                            logbus.AddAccount(NewUserName, "123456", InsertEmp.getMail(),InsertEmp.getPosition(), logbus.SelectLastAddedID());
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
@@ -678,7 +684,7 @@ public class EmployeeGUI extends JPanel implements ActionListener {
                             JOptionPane.YES_NO_OPTION);
                     if(Ans == 0)
                     {
-                        if(logbus.DeleteAccount(Data5))
+                        if(logbus.DeleteAccount(Data1))
                         {
                             empbus.Delete(Data1);
                             DefaultTableModel model = (DefaultTableModel) EmployeeTable.getModel();
@@ -803,11 +809,13 @@ public class EmployeeGUI extends JPanel implements ActionListener {
                 TFName.setBounds(0, TFID.getY() + 45, 250, 30);
                 TFName.setFont(TFfont);
 
-                TFGender = new JTextField(Data3);
-                TFGender.setBounds(0, TFName.getY() + 45, 250, 30);
-                TFGender.setFont(TFfont);
+                CBChooseGender = new JComboBox<>(GenderList);
+                CBChooseGender.setBounds(0, TFName.getY() + 45, 250, 30);
+                CBChooseGender.setFont(TFfont);
+                CBChooseGender.setBackground(Color.WHITE);
+                CBChooseGender.setFocusable(false);
 
-                ChooseBirthday = getjDatePicker(0, TFGender.getY() + 50, 250, 27);
+                ChooseBirthday = getjDatePicker(0, CBChooseGender.getY() + 50, 250, 27);
                 ChooseBirthday.setFont(TFfont);
                 ChooseBirthday.getJFormattedTextField().setEditable(true);
                 LocalDate Data4_1 = LocalDate.parse(Data4);
@@ -833,6 +841,8 @@ public class EmployeeGUI extends JPanel implements ActionListener {
                 CBChooseStatus.setFocusable(false);
                 CBChooseStatus.setBackground(Color.WHITE);
                 CBChooseStatus.setSelectedItem(Data8);
+                CBChooseStatus.setEnabled(false);
+                CBChooseStatus.setBackground(Color.WHITE);
                 //----------------------------------------------------//
 
                 //----------------------------------------------------//
@@ -863,7 +873,7 @@ public class EmployeeGUI extends JPanel implements ActionListener {
 
                 Body.add(TFID);
                 Body.add(TFName);
-                Body.add(TFGender);
+                Body.add(CBChooseGender);
                 Body.add(ChooseBirthday);
                 Body.add(TFEmail);
                 Body.add(TFPhone);
@@ -884,7 +894,7 @@ public class EmployeeGUI extends JPanel implements ActionListener {
             Employee UpdateEmp = new Employee(
                     TFID.getText(),
                     TFName.getText(),
-                    TFGender.getText(),
+                    CBChooseGender.getSelectedItem().toString(),
                     ChooseBirthday.getModel().getValue().toString(),
                     TFEmail.getText(),
                     TFPhone.getText(),
@@ -892,9 +902,13 @@ public class EmployeeGUI extends JPanel implements ActionListener {
                     CBChooseStatus.getSelectedItem().toString(),
                     TFID.getText()
             );
-            //System.out.println(UpdateEmp.toString());
             try {
                 empbus.Update(UpdateEmp);
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+            try {
+                logbus.UpdateAccount(UpdateEmp.getMail(), UpdateEmp.getID());
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }
