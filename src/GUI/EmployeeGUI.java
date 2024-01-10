@@ -2,9 +2,7 @@ package GUI;
 
 import BUS.EmployeeBUS;
 import BUS.LoginBUS;
-import DTO.DetailedBill;
 import DTO.Employee;
-import com.sun.source.tree.DefaultCaseLabelTree;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.SqlDateModel;
@@ -17,13 +15,11 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.RoundRectangle2D;
-import java.sql.SQLOutput;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Objects;
 import java.util.Properties;
 
 public class EmployeeGUI extends JPanel implements ActionListener {

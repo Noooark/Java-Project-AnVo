@@ -1,6 +1,8 @@
 package GUI;
 
+import BUS.InvoiceBUS;
 import BUS.OrderBUS;
+import DTO.Invoice;
 import DTO.Product;
 
 import javax.print.attribute.standard.JobHoldUntil;
@@ -15,6 +17,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -49,6 +52,7 @@ public class InvoiceGUI extends JPanel implements ActionListener {
     static int ProductCount = 0;
     public static String[] Obj;
     OrderBUS ordbus = new OrderBUS();
+    InvoiceBUS invbus = new InvoiceBUS();
     public InvoiceGUI()
     {
         Font FontLabel = new Font("Tahoma", Font.BOLD, 15);
@@ -288,24 +292,61 @@ public class InvoiceGUI extends JPanel implements ActionListener {
                 public void actionPerformed(ActionEvent e) {
                         if(InvoiceTable.getRowCount() == 0)
                         {
-                            JOptionPane.showMessageDialog(null, "Please add product to invoice!", "Error", JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(null,
+                                    "Please add product to invoice!",
+                                    "Error", JOptionPane.ERROR_MESSAGE);
                         }
                         else {
                             if(TFCustomerPayment.getText().isEmpty())
                             {
-                                JOptionPane.showMessageDialog(null, "Please enter the amount of money to pay!", "Error", JOptionPane.ERROR_MESSAGE);
+                                JOptionPane.showMessageDialog(null,
+                                        "Please enter the amount of money to pay!",
+                                        "Error", JOptionPane.ERROR_MESSAGE);
                             }
                             else
                             {
                                 if(TFCustomerChange.getText().isEmpty() || Integer.parseInt(TFCustomerChange.getText()) < 0)
                                 {
-                                    JOptionPane.showMessageDialog(null, "The amount of money to pay is not enough!", "Error", JOptionPane.ERROR_MESSAGE);
+                                    JOptionPane.showMessageDialog(null,
+                                            "The amount of money to pay is not enough!",
+                                            "Error", JOptionPane.ERROR_MESSAGE);
                                 }
                                 else {
+
                                     OrderGUI.PaymentButton = true;
                                     String TitleTabSelected = OrderGUI.InvoiceTab.getTitleAt(OrderGUI.InvoiceTab.getSelectedIndex());
                                     ProductCount = InvoiceTable.getRowCount();
-                                    OrderGUI.CheckClickedPayment(ProductCount);
+                                    String StartTime = "";
+                                    for(int i = 0; i < OrderGUI.PendingInvoiceTable.getRowCount(); i++)
+                                    {
+                                        if(OrderGUI.PendingInvoiceTable.getValueAt(i, 0).toString().equals(TitleTabSelected))
+                                        {
+                                            StartTime = OrderGUI.PendingInvoiceTable.getValueAt(i, 3).toString();
+                                            break;
+                                        }
+                                    }
+                                    OrderGUI.CheckClickedPayment(ProductCount); // Delete the pending invoice in the table
+                                    Invoice inv = new Invoice(
+                                            TitleTabSelected,
+                                            LoginGUI.WelcomeUsername,
+                                            TFCustomerName.getText(),
+                                            StartTime,
+                                            OrderGUI.GetDateAndTime(),
+                                            TFTotalProduct.getText(),
+                                            TFTotalPrice.getText(),
+                                            "Confirmed",
+                                            TANote.getText()
+                                    );
+                                    try {
+                                        invbus.Insert(inv);
+                                    } catch (Exception ex) {
+                                        throw new RuntimeException(ex);
+                                    }
+                                    try {
+                                        OrderGUI.ShowPaidInvoice();
+                                    } catch (Exception ex) {
+                                        throw new RuntimeException(ex);
+                                    }
                                     for (int i = 0; i < InvoiceTable.getRowCount(); i++) {
                                         Product Update = new Product(
                                                 InvoiceTable.getValueAt(i, 2).toString(),
@@ -324,6 +365,7 @@ public class InvoiceGUI extends JPanel implements ActionListener {
                                             break;
                                         }
                                     }
+
                                     try {
                                         DefaultTableModel model1 = (DefaultTableModel) OrderGUI.ProductTable.getModel();
                                         model1.setRowCount(0);
@@ -331,6 +373,7 @@ public class InvoiceGUI extends JPanel implements ActionListener {
                                     } catch (Exception ex) {
                                         throw new RuntimeException();
                                     }
+
                                 }
                             }
                         }

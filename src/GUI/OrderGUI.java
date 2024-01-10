@@ -1,9 +1,13 @@
 package GUI;
 
+import BUS.InvoiceBUS;
 import BUS.OrderBUS;
 import BUS.ProductBUS;
+import DTO.Invoice;
+import DTO.Invoice;
 import DTO.Product;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -20,6 +24,7 @@ import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
 public class OrderGUI extends JPanel implements ActionListener {
     static OrderBUS ordbus = new OrderBUS();
     static ProductBUS prdbus = new ProductBUS();
+    static InvoiceBUS invbus = new InvoiceBUS();
     JPanel PLeft, PRight;
     String[] ListType = {"All", "Coffee", "Tea", "Milk", "Iced Drinks"};
     JComboBox CBListType = new JComboBox(ListType);
@@ -34,6 +39,7 @@ public class OrderGUI extends JPanel implements ActionListener {
     JMenuItem MenuAdd;
     JButton BAddInvoice, BRemoveInvoice;
     static JButton BTableStatus;
+    JButton BDetail;
     String SelectedType;
     JLabel PendingInvoice, PaidInvoice;
     public static boolean PaymentButton = false;
@@ -49,7 +55,7 @@ public class OrderGUI extends JPanel implements ActionListener {
             return false;
         }
     };
-    DefaultTableModel modelpaid = new DefaultTableModel() {
+    static DefaultTableModel modelpaid = new DefaultTableModel() {
         @Override
         public boolean isCellEditable(int row, int column) {
             return false;
@@ -469,14 +475,77 @@ public class OrderGUI extends JPanel implements ActionListener {
         }
 
 
-        PendingListScroll.setBounds(0, PendingInvoice.getY() + 40, 599, 151);
+        PendingListScroll.setBounds(0, PendingInvoice.getY() + 35, 599, 151);
         PendingListScroll.setViewportView(PendingInvoiceTable);
         PendingListScroll.getViewport().setBackground(Color.WHITE);
+
+        PaidInvoice = new JLabel("Paid bill:");
+        PaidInvoice.setBackground(new Color(179, 204, 255));
+        PaidInvoice.setFont(FontLabel);
+        PaidInvoice.setBounds(5, PendingListScroll.getY() + 150, 120, 35);
+
+        PaidInvoiceTable = new JTable(modelpaid);
+        PaidInvoiceTable.setShowGrid(true);
+        PaidInvoiceTable.getTableHeader().setReorderingAllowed(false);
+        PaidInvoiceTable.getTableHeader().setResizingAllowed(false);
+
+        PaidInvoiceTable.setFont(MainFont);
+        PaidInvoiceTable.getTableHeader().setFont(new Font("Tahoma", Font.BOLD, 16));
+        PaidInvoiceTable.getTableHeader().setBackground(new Color(179, 204, 255));
+        PaidInvoiceTable.setRowHeight(35);
+
+        /*
+        PaidInvoiceTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int row = PaidInvoiceTable.rowAtPoint(e.getPoint());
+                int column = PaidInvoiceTable.columnAtPoint(e.getPoint());
+
+                if (column == 5) {
+                    String details = (String) PaidInvoiceTable.getValueAt(row, column);
+                    JOptionPane.showMessageDialog(null, "ASD");
+                }
+            }
+        });
+         */
+
+        if (modelpaid.getColumnCount() < 6) {
+            modelpaid.addColumn("Bill ID");
+            modelpaid.addColumn("Creator");
+            modelpaid.addColumn("Customer");
+            modelpaid.addColumn("Time");
+            modelpaid.addColumn("Status");
+            modelpaid.addColumn("Note");
+        }
+        PaidListScroll = new JScrollPane();
+        PaidListScroll.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_NEVER);
+        PaidListScroll.setBorder(BorderFactory.createEtchedBorder(1));
+        PaidListScroll.setBounds(0, PaidInvoice.getY() + 35, 599, 161);
+        PaidListScroll.setViewportView(PaidInvoiceTable);
+        PaidListScroll.getViewport().setBackground(Color.WHITE);
+
+        try {
+            ShowPaidInvoice();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        BDetail = new JButton("<html><u>Detail</u></html>");
+        BDetail.setBounds(PaidInvoice.getX() + 514, PaidInvoice.getY() + 3, 80, 30);
+        BDetail.setBackground(Color.WHITE);
+        BDetail.setFont(new Font("Tahoma", Font.PLAIN, 13));
+        BDetail.setFocusable(false);
+        BDetail.addActionListener(this);
+        BDetail.setBackground(new Color(217, 217, 217));
+        BDetail.setBorder(null);
         //----------------------------------------------------//
 
         //----------------------------------------------------//
         PLeft.add(PendingInvoice);
         PLeft.add(PendingListScroll);
+        PLeft.add(PaidInvoice);
+        PLeft.add(PaidListScroll);
+        PLeft.add(BDetail);
         //----------------------------------------------------//
 
         //--------------------------------------------------------------------------------------------------------//
@@ -487,7 +556,22 @@ public class OrderGUI extends JPanel implements ActionListener {
         this.add(PRight, BorderLayout.EAST);
         //----------------------------------------------------//
     }
-
+    public static void ShowPaidInvoice() throws Exception {
+        modelpaid.setRowCount(0);
+        List<Invoice> listS = invbus.SelectSimple();
+        for (Invoice s : listS) {
+            String InvObj[] = {
+                    s.getID(),
+                    s.getCreator(),
+                    s.getCustomerName(),
+                    s.getCreateTime(),
+                    s.getStatus(),
+                    s.getNote()
+            };
+            modelpaid.addRow(InvObj);
+            modelpaid.fireTableDataChanged();
+        }
+    }
     public static void ShowProduct() throws Exception {
         model.setRowCount(0);
         List<Product> listS = prdbus.SelectAll();
@@ -679,7 +763,7 @@ public class OrderGUI extends JPanel implements ActionListener {
             String DateAndTime = GetDateAndTime();
 
             //----------------------------------------------------////----------------------------------------------------//
-            String[] PendingString = {InvoiceTab.getTitleAt(InvoiceTab.getTabCount() - 1), "Admin", " ", DateAndTime, "Pending", ""};
+            String[] PendingString = {InvoiceTab.getTitleAt(InvoiceTab.getTabCount() - 1), LoginGUI.WelcomeUsername, " ", DateAndTime, "Pending", ""};
             //----------------------------------------------------////----------------------------------------------------//
 
             modelpending.addRow(PendingString);
@@ -710,9 +794,13 @@ public class OrderGUI extends JPanel implements ActionListener {
             TableGUI TableFrame = new TableGUI();
             BTableStatus.setEnabled(false);
         }
+        if(e.getSource() == BDetail)
+        {
+            new DetailInvoiceGUI();
+        }
     }
 
-    private String GetDateAndTime() {
+    public static String GetDateAndTime() {
         Date currentDate = new Date();
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(currentDate);
