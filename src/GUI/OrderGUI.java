@@ -538,6 +538,7 @@ public class OrderGUI extends JPanel implements ActionListener {
         BDetail.addActionListener(this);
         BDetail.setBackground(new Color(217, 217, 217));
         BDetail.setBorder(null);
+
         //----------------------------------------------------//
 
         //----------------------------------------------------//

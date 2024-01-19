@@ -16,6 +16,8 @@ import javax.swing.text.View;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -42,8 +44,17 @@ public class InvoiceGUI extends JPanel implements ActionListener {
     JTable InvoiceTable;
     JScrollPane ListScroll;
     JPanel LeftPayment, RightPayment;
-    JTextField TFCustomerPhoneNumber, TFCustomerName, TFCustomerPoint, TFOtherAmount, TFNote,
-            TFTotalProduct, TFTotalPrice, TFCustomerPayment, TFCustomerChange, TFPaymentMethod, TFAddress;
+    JTextField TFCustomerPhoneNumber;
+    static JTextField TFCustomerName;
+    JTextField TFCustomerPoint;
+    JTextField TFOtherAmount;
+    JTextField TFNote;
+    JTextField TFTotalProduct;
+    static JTextField TFTotalPrice;
+    static JTextField TFCustomerPayment;
+    static JTextField TFCustomerChange;
+    JTextField TFPaymentMethod;
+    JTextField TFAddress;
     JLabel LCustomerPhone, LCustomerName, LCustomerPoint, LNote, LOtherAmount,
             LTotalProduct, LTotalPrice, LCustomerPayment, LCustomerChange, LPaymentMethod, LAddress;
     JTextArea TANote, TAAddress;
@@ -220,7 +231,6 @@ public class InvoiceGUI extends JPanel implements ActionListener {
                                 - Integer.parseInt(TFTotalPrice.getText())));
                     }
                 }
-
                 public void removeUpdate(DocumentEvent e) {
                     if(TFCustomerPayment.getText().isEmpty()) {
                         TFCustomerChange.setText("");
@@ -234,7 +244,6 @@ public class InvoiceGUI extends JPanel implements ActionListener {
                         }
                     }
                 }
-
                 public void changedUpdate(DocumentEvent e) {
                     //System.out.println("Text changed: " + TFCustomerPayment.getText());
                 }
@@ -312,7 +321,6 @@ public class InvoiceGUI extends JPanel implements ActionListener {
                                             "Error", JOptionPane.ERROR_MESSAGE);
                                 }
                                 else {
-
                                     OrderGUI.PaymentButton = true;
                                     String TitleTabSelected = OrderGUI.InvoiceTab.getTitleAt(OrderGUI.InvoiceTab.getSelectedIndex());
                                     ProductCount = InvoiceTable.getRowCount();
@@ -337,6 +345,16 @@ public class InvoiceGUI extends JPanel implements ActionListener {
                                             "Confirmed",
                                             TANote.getText()
                                     );
+                                    new PDF(InvoiceTable, inv.getCreateTime(), inv.getPaymentTime(), inv.getID());
+                                    String Path = "src/InvoicePDF/Inv." + inv.getID() + ".pdf";
+                                    System.out.println(Path);
+                                    try {
+                                        Desktop.getDesktop().open(new File(Path));
+                                    } catch (IOException ex) {
+                                        //throw new RuntimeException(ex);
+                                    }
+
+
                                     try {
                                         invbus.Insert(inv);
                                     } catch (Exception ex) {
@@ -373,7 +391,6 @@ public class InvoiceGUI extends JPanel implements ActionListener {
                                     } catch (Exception ex) {
                                         throw new RuntimeException();
                                     }
-
                                 }
                             }
                         }

@@ -135,6 +135,7 @@ public class TableGUI extends JFrame implements ActionListener {
         BCancel.setBackground(Color.WHITE);
         BCancel.setBounds(554, BEdit.getY() + 35, 90, 30);
         BCancel.addActionListener(this);
+
         //----------------------------------------------------//
 
         //----------------------------------------------------//
