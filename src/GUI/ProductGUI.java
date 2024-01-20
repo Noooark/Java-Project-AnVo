@@ -8,6 +8,7 @@ import javax.swing.border.AbstractBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.RoundRectangle2D;
@@ -23,6 +24,7 @@ public class ProductGUI extends JPanel implements ActionListener {
     Font MainFont = new Font("Tahoma", Font.BOLD, 16);
     String[] ListPosition = {"All", "ID","Type", "Status"};
     String[] ColumnTable = {"ID", "Name", "Gender", "Birthday", "Email", "Phone", "Position", "Status"};
+    String[] Type = {"Coffee", "Iced Drinks", "Special", "Milk", "Tea"};
     String Data1, Data2, Data3, Data4, Data5, Data6, Data7, Data8;
     String SelectedColumn, SelectedStatus;
     //----------------------------------------------------//
@@ -42,28 +44,14 @@ public class ProductGUI extends JPanel implements ActionListener {
     JComboBox CBProduct;
     JComboBox CBStatus = new JComboBox<>(new String[] {"Available", "Unavailable"});
     JComboBox CBSelectedStatus = new JComboBox<>(new String[] {"Available", "Unavailable"});
-    JTextField TFSearch, TFID, TFName, TFType, TFPrice, TFQuantity, TFStatus;
+    JTextField TFSearch, TFID, TFName, TFPrice, TFQuantity, TFStatus;
+    JComboBox CBType;
     JButton BAdd, BRemove, BEdit, Submit, Cancel, SubmitEdit, CancelEdit;
     JLabel LAdd_Emp, LID_Prd, LName_Prd, LType_Prd, LPrice_Prd, LQuantity_Prd, LStatus_Prd;
     ImageIcon Icon;
     JFrame Main;
     public static Product emp = new Product();
     //----------------------------------------------------//
-    static class RoundBorder extends AbstractBorder {
-        private int radius;
-        public RoundBorder(int radius) {
-            this.radius = radius;
-        }
-
-        @Override
-        public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
-            Graphics2D g2d = (Graphics2D) g.create();
-            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            Shape border = new RoundRectangle2D.Double(x, y, width - 1, height - 1, radius, radius);
-            g2d.draw(border);
-            g2d.dispose();
-        }
-    }
     public ProductGUI() {
 
         //----------------------------------------------------//
@@ -72,7 +60,7 @@ public class ProductGUI extends JPanel implements ActionListener {
 
         //------------------- JPanel -------------------------//
         PAllContent = new JPanel();
-        PAllContent.setBackground(new Color(153, 194, 255));
+        PAllContent.setBackground(new Color(217, 217, 217));
         PAllContent.setBounds(0, 0, 1170, 800);
         PAllContent.setLayout(null);
 
@@ -322,8 +310,20 @@ public class ProductGUI extends JPanel implements ActionListener {
         //----------------------------------------------------//
 
         //------------------ Product List --------------------//
-        ProductTable = new JTable();
-        ProductTable.setModel(model);
+        ProductTable = new JTable(model){
+            @Override
+            public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+                Component comp = super.prepareRenderer(renderer, row, column);
+                if (ProductTable.getRowCount() >= 1) {
+                    if (comp.getPreferredSize().width > comp.getWidth()) {
+                        setToolTipText(getValueAt(row, column).toString());
+                    } else {
+                        setToolTipText(null);
+                    }
+                }
+                return comp;
+            }
+        };
         //ProductTable.setCellSelectionEnabled(false);
         //ProductTable.setRowSelectionAllowed(true);
         ProductTable.setShowGrid(false);
@@ -332,7 +332,7 @@ public class ProductGUI extends JPanel implements ActionListener {
 
         ProductTable.setFont(MainFont);
         ProductTable.getTableHeader().setFont(new Font("Tahoma", Font.BOLD, 18));
-        ProductTable.getTableHeader().setBackground(new Color(179, 204, 255));
+        ProductTable.getTableHeader().setBackground(new Color(102, 179, 255));
         ProductTable.setRowHeight(50);
 
         ListScroll = new JScrollPane();
@@ -353,7 +353,8 @@ public class ProductGUI extends JPanel implements ActionListener {
         }
 
         //
-        ListScroll.setBounds(0, 65, 1050, 800);
+        ListScroll.setBounds(0, 65, 1050, 700);
+        ListScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         //
 
         ListScroll.setViewportView(ProductTable);
@@ -476,12 +477,14 @@ public class ProductGUI extends JPanel implements ActionListener {
             TFName.setBounds(0, 30, 250, 30);
             TFName.setFont(TFfont);
 
-            TFType = new JTextField();
-            TFType.setBounds(0, TFName.getY() + 45, 250, 30);
-            TFType.setFont(TFfont);
+            CBType = new JComboBox<>(Type);
+            CBType.setBounds(0, TFName.getY() + 45, 250, 30);
+            CBType.setFont(TFfont);
+            CBType.setBackground(Color.WHITE);
+            CBType.setFocusable(false);
 
             TFPrice = new JTextField();
-            TFPrice.setBounds(0, TFType.getY() + 45, 250, 30);
+            TFPrice.setBounds(0, CBType.getY() + 45, 250, 30);
             TFPrice.setFont(TFfont);
 
             TFQuantity = new JTextField();
@@ -526,7 +529,7 @@ public class ProductGUI extends JPanel implements ActionListener {
 
             //Body.add(TFID);
             Body.add(TFName);
-            Body.add(TFType);
+            Body.add(CBType);
             Body.add(TFPrice);
             Body.add(TFQuantity);
             Body.add(CBStatus);
@@ -543,7 +546,7 @@ public class ProductGUI extends JPanel implements ActionListener {
         {
             Product InsertPrd = new Product(
                     TFName.getText(),
-                    TFType.getText(),
+                    CBType.getSelectedItem().toString(),
                     TFPrice.getText(),
                     TFQuantity.getText(),
                     (String) CBStatus.getSelectedItem()
@@ -703,12 +706,14 @@ public class ProductGUI extends JPanel implements ActionListener {
                 TFName.setBounds(0, TFID.getY() + 45, 250, 30);
                 TFName.setFont(TFfont);
 
-                TFType = new JTextField(Data3);
-                TFType.setBounds(0, TFName.getY() + 45, 250, 30);
-                TFType.setFont(TFfont);
+                CBType = new JComboBox<>(Type);
+                CBType.setBounds(0, TFName.getY() + 45, 250, 30);
+                CBType.setFont(TFfont);
+                CBType.setBackground(Color.WHITE);
+                CBType.setFocusable(false);
 
                 TFPrice = new JTextField(Data4);
-                TFPrice.setBounds(0, TFType.getY() + 45, 250, 30);
+                TFPrice.setBounds(0,CBType.getY() + 45, 250, 30);
                 TFPrice.setFont(TFfont);
 
                 TFQuantity = new JTextField(Data5);
@@ -758,7 +763,7 @@ public class ProductGUI extends JPanel implements ActionListener {
 
                 Body.add(TFID);
                 Body.add(TFName);
-                Body.add(TFType);
+                Body.add(CBType);
                 Body.add(TFPrice);
                 Body.add(TFQuantity);
                 Body.add(CBStatus);
@@ -777,7 +782,7 @@ public class ProductGUI extends JPanel implements ActionListener {
             Product UpdatePrd = new Product(
                     TFID.getText(),
                     TFName.getText(),
-                    TFType.getText(),
+                    CBType.getSelectedItem().toString(),
                     TFPrice.getText(),
                     TFQuantity.getText(),
                     (String) CBStatus.getSelectedItem(),

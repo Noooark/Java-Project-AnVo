@@ -18,6 +18,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -78,7 +79,7 @@ public class InvoiceGUI extends JPanel implements ActionListener {
         InvoiceTable.setFont(new Font("Tahoma", Font.BOLD, 15));
         InvoiceTable.getTableHeader().setReorderingAllowed(false);
         InvoiceTable.getTableHeader().setResizingAllowed(false);
-        InvoiceTable.getTableHeader().setBackground(new Color(179, 204, 255));
+        InvoiceTable.getTableHeader().setBackground(new Color(102, 179, 255));
 
         ListScroll = new JScrollPane();
         ListScroll.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_NEVER);
@@ -333,6 +334,7 @@ public class InvoiceGUI extends JPanel implements ActionListener {
                                             break;
                                         }
                                     }
+                                    LocalDate CurrDate = LocalDate.now();
                                     OrderGUI.CheckClickedPayment(ProductCount); // Delete the pending invoice in the table
                                     Invoice inv = new Invoice(
                                             TitleTabSelected,
@@ -343,7 +345,8 @@ public class InvoiceGUI extends JPanel implements ActionListener {
                                             TFTotalProduct.getText(),
                                             TFTotalPrice.getText(),
                                             "Confirmed",
-                                            TANote.getText()
+                                            TANote.getText(),
+                                            CurrDate.toString()
                                     );
                                     new PDF(InvoiceTable, inv.getCreateTime(), inv.getPaymentTime(), inv.getID());
                                     String Path = "src/InvoicePDF/Inv." + inv.getID() + ".pdf";
@@ -353,7 +356,6 @@ public class InvoiceGUI extends JPanel implements ActionListener {
                                     } catch (IOException ex) {
                                         //throw new RuntimeException(ex);
                                     }
-
 
                                     try {
                                         invbus.Insert(inv);

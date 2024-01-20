@@ -293,7 +293,7 @@ public class OrderGUI extends JPanel implements ActionListener {
 
         ProductTable.setFont(MainFont);
         ProductTable.getTableHeader().setFont(new Font("Tahoma", Font.BOLD, 18));
-        ProductTable.getTableHeader().setBackground(new Color(179, 204, 255));
+        ProductTable.getTableHeader().setBackground(new Color(102, 179, 255));
         ProductTable.setRowHeight(35);
 
         JPopupMenu PopupMenu = new JPopupMenu();
@@ -301,9 +301,7 @@ public class OrderGUI extends JPanel implements ActionListener {
         AddToInvoice.setBackground(Color.WHITE);
 
         AddToInvoice.addActionListener(event -> {
-            System.out.println("UA CAI NAY DE LAM GI");
         });
-
         PopupMenu.add(AddToInvoice);
 
         ProductTable.addMouseListener(new MouseAdapter() {
@@ -431,7 +429,7 @@ public class OrderGUI extends JPanel implements ActionListener {
         //----------------------------------------------------//
         PendingInvoice = new JLabel("Pending bill:");
 
-        PendingInvoice.setBackground(new Color(179, 204, 255));
+        PendingInvoice.setBackground(new Color(102, 179, 255));
         PendingInvoice.setFont(FontLabel);
         PendingInvoice.setBounds(5, 415, 120, 35);
         //----------------------------------------------------//
@@ -458,7 +456,7 @@ public class OrderGUI extends JPanel implements ActionListener {
 
         PendingInvoiceTable.setFont(MainFont);
         PendingInvoiceTable.getTableHeader().setFont(new Font("Tahoma", Font.BOLD, 16));
-        PendingInvoiceTable.getTableHeader().setBackground(new Color(179, 204, 255));
+        PendingInvoiceTable.getTableHeader().setBackground(new Color(102, 179, 255));
         PendingInvoiceTable.setRowHeight(35);
 
         PendingListScroll = new JScrollPane();
@@ -484,14 +482,27 @@ public class OrderGUI extends JPanel implements ActionListener {
         PaidInvoice.setFont(FontLabel);
         PaidInvoice.setBounds(5, PendingListScroll.getY() + 150, 120, 35);
 
-        PaidInvoiceTable = new JTable(modelpaid);
+        PaidInvoiceTable = new JTable(modelpaid){
+            @Override
+            public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+                Component comp = super.prepareRenderer(renderer, row, column);
+                if (PaidInvoiceTable.getRowCount() >= 1) {
+                    if (comp.getPreferredSize().width > comp.getWidth()) {
+                        setToolTipText(getValueAt(row, column).toString());
+                    } else {
+                        setToolTipText(null);
+                    }
+                }
+                return comp;
+            }
+        };
         PaidInvoiceTable.setShowGrid(true);
         PaidInvoiceTable.getTableHeader().setReorderingAllowed(false);
         PaidInvoiceTable.getTableHeader().setResizingAllowed(false);
 
         PaidInvoiceTable.setFont(MainFont);
         PaidInvoiceTable.getTableHeader().setFont(new Font("Tahoma", Font.BOLD, 16));
-        PaidInvoiceTable.getTableHeader().setBackground(new Color(179, 204, 255));
+        PaidInvoiceTable.getTableHeader().setBackground(new Color(102, 179, 255));
         PaidInvoiceTable.setRowHeight(35);
 
         /*

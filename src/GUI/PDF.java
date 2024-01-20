@@ -3,7 +3,6 @@ package GUI;
 import javax.swing.*;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
 import com.itextpdf.text.*;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfPCell;

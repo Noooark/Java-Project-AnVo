@@ -1,6 +1,6 @@
 package DTO;
 public class Invoice{
-    private String ID, Creator, CustomerName, CreateTime, PaymentTime, Quantity, Total, Status, Note;
+    private String ID, Creator, CustomerName, CreateTime, PaymentTime, Quantity, Total, Status, Note, PaymentDate;
     public Invoice(String ID, String Creator, String CustomerName, String CreateTime, String Status, String Note)
     {
         this.ID = ID;
@@ -9,6 +9,19 @@ public class Invoice{
         this.CreateTime = CreateTime;
         this.Status = Status;
         this.Note = Note;
+    }
+    public Invoice(String ID, String Creator, String CustomerName, String CreateTime, String PaymentTime, String Quantity, String Total, String Status, String Note, String PaymentDate)
+    {
+        this.ID = ID;
+        this.Creator = Creator;
+        this.CustomerName = CustomerName;
+        this.CreateTime = CreateTime;
+        this.PaymentTime = PaymentTime;
+        this.Quantity = Quantity;
+        this.Total = Total;
+        this.Status = Status;
+        this.Note = Note;
+        this.PaymentDate = PaymentDate;
     }
     public Invoice(String ID, String Creator, String CustomerName, String CreateTime, String PaymentTime, String Quantity, String Total, String Status, String Note)
     {
@@ -92,6 +105,13 @@ public class Invoice{
 
     public void setNote(String note) {
         Note = note;
+    }
+
+    public String getPaymentDate() {
+        return PaymentDate;
+    }
+    public void setPaymentDate(String PaymentDate) {
+        this.PaymentDate = PaymentDate;
     }
 
     @Override

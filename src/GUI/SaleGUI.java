@@ -353,7 +353,7 @@ public class SaleGUI extends JPanel implements ActionListener {
 
         PromotionListTable.getTableHeader().setFont(new Font("Tahoma", Font.BOLD, 16));
         PromotionListTable.getTableHeader().setOpaque(false);
-        PromotionListTable.getTableHeader().setBackground(new Color(179, 204, 255));
+        PromotionListTable.getTableHeader().setBackground(new Color(102, 179, 255));
         //PromotionListTable.getTableHeader().setForeground(new Color(255,255,255));
         PromotionListTable.getTableHeader().setReorderingAllowed(false);
         PromotionListTable.getTableHeader().setResizingAllowed(false);
@@ -546,7 +546,7 @@ public class SaleGUI extends JPanel implements ActionListener {
         model1.addColumn("");
         AppliedPromotionTable.getTableHeader().setFont(new Font("Tahoma", Font.BOLD, 16));
         AppliedPromotionTable.getTableHeader().setOpaque(false);
-        AppliedPromotionTable.getTableHeader().setBackground(new Color(179, 204, 255));
+        AppliedPromotionTable.getTableHeader().setBackground(new Color(102, 179, 255));
         //AppliedPromotionTable.getTableHeader().setForeground(new Color(255,255,255));
         AppliedPromotionTable.getTableHeader().setReorderingAllowed(false);
         AppliedPromotionTable.getTableHeader().setResizingAllowed(false);
@@ -658,6 +658,23 @@ public class SaleGUI extends JPanel implements ActionListener {
         for (Sale s : listS) {
             LocalDate EndedDate = LocalDate.parse(s.getEndDate());
             LocalDate CurrentDate = LocalDate.now();
+            if(EndedDate.compareTo(CurrentDate) < 0)
+            {
+                s.setStatus("Expired");
+                slebus.UpdateStatus(s);
+            }
+            Object SaleObj[] = {
+                    s.getID(),
+                    s.getName(),
+                    s.getType(),
+                    s.getValue(),
+                    s.getStartDate(),
+                    s.getEndDate(),
+                    s.getStatus()
+            };
+            model.addRow(SaleObj);
+            model.fireTableDataChanged();
+            /*
             String ProductObj[] = {
                     s.getID(),
                     s.getName(),
@@ -669,6 +686,7 @@ public class SaleGUI extends JPanel implements ActionListener {
             };
             model.addRow(ProductObj);
             model.fireTableDataChanged();
+             */
         }
     }
     static public String CheckPricePromo(String StartDate, String EndDate, String NewPrice, String Price)

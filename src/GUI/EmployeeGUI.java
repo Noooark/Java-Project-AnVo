@@ -12,6 +12,7 @@ import javax.swing.border.AbstractBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.RoundRectangle2D;
@@ -59,21 +60,6 @@ public class EmployeeGUI extends JPanel implements ActionListener {
     JFrame Main;
     public static Employee emp = new Employee();
     //----------------------------------------------------//
-    static class RoundBorder extends AbstractBorder {
-        private int radius;
-        public RoundBorder(int radius) {
-            this.radius = radius;
-        }
-
-        @Override
-        public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
-            Graphics2D g2d = (Graphics2D) g.create();
-            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            Shape border = new RoundRectangle2D.Double(x, y, width - 1, height - 1, radius, radius);
-            g2d.draw(border);
-            g2d.dispose();
-        }
-    }
     public EmployeeGUI() {
 
         //----------------------------------------------------//
@@ -82,7 +68,7 @@ public class EmployeeGUI extends JPanel implements ActionListener {
 
         //------------------- JPanel -------------------------//
         PAllContent = new JPanel();
-        PAllContent.setBackground(new Color(153, 194, 255));
+        PAllContent.setBackground(new Color(217, 217, 217));
         PAllContent.setBounds(0, 0, 1170, 800);
         PAllContent.setLayout(null);
 
@@ -214,7 +200,6 @@ public class EmployeeGUI extends JPanel implements ActionListener {
                     TFSearch.repaint();
                 }
             }
-
             public void focusLost(FocusEvent e) {
                 if(TFSearch.getText().isEmpty()){
                     TFSearch.add(new JLabel(Icon), BorderLayout.WEST);
@@ -275,8 +260,20 @@ public class EmployeeGUI extends JPanel implements ActionListener {
         //----------------------------------------------------//
 
         //------------------ Employee List --------------------//
-        EmployeeTable = new JTable();
-        EmployeeTable.setModel(model);
+        EmployeeTable = new JTable(model){
+            @Override
+            public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+                Component comp = super.prepareRenderer(renderer, row, column);
+                if (EmployeeTable.getRowCount() >= 1) {
+                    if (comp.getPreferredSize().width > comp.getWidth()) {
+                        setToolTipText(getValueAt(row, column).toString());
+                    } else {
+                        setToolTipText(null);
+                    }
+                }
+                return comp;
+            }
+        };
             //EmployeeTable.setCellSelectionEnabled(false);
             //EmployeeTable.setRowSelectionAllowed(true);
         EmployeeTable.setShowGrid(false);
@@ -285,7 +282,7 @@ public class EmployeeGUI extends JPanel implements ActionListener {
 
         EmployeeTable.setFont(MainFont);
         EmployeeTable.getTableHeader().setFont(new Font("Tahoma", Font.BOLD, 18));
-        EmployeeTable.getTableHeader().setBackground(new Color(179, 204, 255));
+        EmployeeTable.getTableHeader().setBackground(new Color(102, 179, 255));
         EmployeeTable.setRowHeight(50);
 
         ListScroll = new JScrollPane();
@@ -308,7 +305,8 @@ public class EmployeeGUI extends JPanel implements ActionListener {
         }
 
         //
-        ListScroll.setBounds(0, 65, 1050, 800);
+        ListScroll.setBounds(0, 65, 1050, 700);
+        ListScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         //
 
         ListScroll.setViewportView(EmployeeTable);
@@ -452,13 +450,6 @@ public class EmployeeGUI extends JPanel implements ActionListener {
 
             //---------------------- Label ------------------------//
             Font font = new Font("Tahoma", Font.BOLD, 19);
-
-            /*
-            LID_Emp = new JLabel("ID:  ");
-            LID_Emp.setFont(font);
-            LID_Emp.setHorizontalAlignment(JLabel.RIGHT);
-            LID_Emp.setBounds(48, 5, 100, 30);
-            */
 
             LName_Emp = new JLabel("Name:  ");
             LName_Emp.setFont(font);

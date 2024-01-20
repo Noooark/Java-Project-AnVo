@@ -17,7 +17,7 @@ public class InvoiceDAO implements InterfaceDAO<Invoice>{
     @Override
     public boolean Insert(Invoice Invoice) throws Exception {
         Connection conn = new DBConnect().getConn();
-        String Insert = "INSERT INTO Invoice VALUES (?,?,?,?,?,?,?,?,?)";
+        String Insert = "INSERT INTO Invoice VALUES (?,?,?,?,?,?,?,?,?,?)";
         PreparedStatement ps = conn.prepareStatement(Insert);
         ps.setString(1, Invoice.getID());
         ps.setString(2, Invoice.getCreator());
@@ -28,6 +28,7 @@ public class InvoiceDAO implements InterfaceDAO<Invoice>{
         ps.setString(7, Invoice.getTotal());
         ps.setString(8, Invoice.getStatus());
         ps.setString(9, Invoice.getNote());
+        ps.setString(10, Invoice.getPaymentDate());
         check = ps.executeUpdate();
         conn.close();
         return check > 0;

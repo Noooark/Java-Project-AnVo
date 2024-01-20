@@ -66,7 +66,7 @@ public class DetailInvoiceGUI extends JFrame implements ActionListener {
 
         DetailInvoiceTable.setFont(MainFont);
         DetailInvoiceTable.getTableHeader().setFont(new Font("Tahoma", Font.BOLD, 18));
-        DetailInvoiceTable.getTableHeader().setBackground(new Color(179, 204, 255));
+        DetailInvoiceTable.getTableHeader().setBackground(new Color(102, 179, 255));
         DetailInvoiceTable.setRowHeight(35);
 
         DetailInvoiceTable.addMouseListener(new MouseAdapter() {

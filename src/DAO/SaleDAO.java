@@ -67,6 +67,16 @@ public class SaleDAO implements InterfaceDAO<Sale> {
         conn.close();
         return check > 0;
     }
+    public Boolean UpdateStatus(Sale sle) throws Exception{
+        Connection conn = new DBConnect().getConn();
+        String Update = "UPDATE Sale SET Status = ? WHERE Sale.ID = ?";
+        PreparedStatement ps = conn.prepareStatement(Update);
+        ps.setString(1, sle.getStatus());
+        ps.setString(2, sle.getID());
+        check = ps.executeUpdate();
+        conn.close();
+        return check > 0;
+    }
     @Override
     public List<Sale> SelectAll() throws Exception {
         Connection conn = new DBConnect().getConn();

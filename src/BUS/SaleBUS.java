@@ -23,6 +23,9 @@ public class SaleBUS {
     public boolean Update(Sale sle) throws Exception {
         return dao.Update(sle);
     }
+    public boolean UpdateStatus(Sale sle) throws Exception {
+        return dao.UpdateStatus(sle);
+    }
 
     public boolean Delete(String s) throws Exception {
         return dao.Delete(s);
@@ -52,4 +55,5 @@ public class SaleBUS {
     public void SearchName(DefaultTableModel table, String name) throws Exception {
         dao.SearchName(table, name);
     }
+
 }
