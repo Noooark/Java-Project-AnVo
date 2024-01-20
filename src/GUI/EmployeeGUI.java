@@ -87,6 +87,7 @@ public class EmployeeGUI extends JPanel implements ActionListener {
                 SelectedColumn = (String) CBPosition.getSelectedItem();
             }
         });
+        CBPosition.setFocusable(false);
         //----------------------------------------------------//
 
         //--------------------- Buttons -----------------------//
@@ -221,46 +222,12 @@ public class EmployeeGUI extends JPanel implements ActionListener {
                 }
             }
         });
-        //---------------- Action Listener -------------------//
-        /*
-            TFSearch.addKeyListener(new KeyAdapter() {
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    SelectedColumn = CBPosition.getSelectedItem().toString();
-                    if(TFSearch.getText().isEmpty())
-                    {
-                        DefaultTableModel model = (DefaultTableModel) EmployeeTable.getModel();
-                        model.setRowCount(0);
-                        try {
-                            EmployeeList();
-                        } catch (Exception ex) {
-                            JOptionPane.showMessageDialog(null, "Error. Please try again.");
-                            throw new RuntimeException(ex);
-                        }
-                    }
-                    else
-                    {
-                        if(Objects.equals(SelectedColumn, "All"))
-                        {
-                            ;
-                        }
-                        else
-                        {
-                            try {
-                                empbus.Search(model, SelectedColumn, TFSearch.getText());
-                            } catch (Exception ex) {
-                                throw new RuntimeException(ex);
-                            }
-                        }
-                    }
-                }
-            }
-        });
-         */
+
         //----------------------------------------------------//
 
         //------------------ Employee List --------------------//
         EmployeeTable = new JTable(model){
+            /*(
             @Override
             public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
                 Component comp = super.prepareRenderer(renderer, row, column);
@@ -273,9 +240,8 @@ public class EmployeeGUI extends JPanel implements ActionListener {
                 }
                 return comp;
             }
+             */
         };
-            //EmployeeTable.setCellSelectionEnabled(false);
-            //EmployeeTable.setRowSelectionAllowed(true);
         EmployeeTable.setShowGrid(false);
         EmployeeTable.getTableHeader().setReorderingAllowed(false);
         EmployeeTable.getTableHeader().setResizingAllowed(false);
